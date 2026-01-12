@@ -1,0 +1,20 @@
+/* 1. 背景を薄いグレーにして、カードを際立たせる */
+body {
+    background-color: #f6f8fa;
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    color: #333;
+}
+
+/* 2. カードのデザインをモダンにする */
+.card {
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out;
+}
+
+/* 3. マウスを乗せた時にふわっと浮く演出 */
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}

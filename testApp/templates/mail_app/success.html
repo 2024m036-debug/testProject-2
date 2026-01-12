@@ -1,0 +1,94 @@
+{% extends 'mail_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">メール作成完了！</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">以下の内容をコピーしてご利用ください。</p>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">【件名】</label>
+                <div class="input-group">
+                    <input type="text" id="emailSubject" class="form-control" value="{{ email.subject }}" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('emailSubject', this)">
+                        件名をコピー
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">【本文】</label>
+                <textarea id="emailBody" class="form-control" rows="12" readonly>{{ email.body }}</textarea>
+                <div class="mt-2 text-end">
+                    <button class="btn btn-primary" type="button" onclick="copyToClipboard('emailBody', this)">
+                        本文をコピーする
+                    </button>
+                </div>
+            </div>
+
+            <hr>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'email_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-list"></i> 履歴一覧へ
+                </a>
+                <a href="mailto:?subject={{ email.subject|urlencode }}&body={{ email.body|urlencode }}" class="btn btn-info text-white">
+                    <i class="bi bi-envelope"></i> メールソフトを起動
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="copyMessage" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                クリップボードにコピーしました！
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * 指定されたIDの要素の値をクリップボードにコピーし、ボタンの表示を一時的に変更する
+ * @param {string} elementId - コピー対象の要素ID
+ * @param {HTMLElement} btn - クリックされたボタン自身 (this)
+ */
+function copyToClipboard(elementId, btn) {
+    // 1. 要素を取得
+    const copyText = document.getElementById(elementId);
+    
+    // 2. クリップボードに書き込み
+    navigator.clipboard.writeText(copyText.value).then(() => {
+        // 3. トースト通知の表示
+        const toastEl = document.getElementById('copyMessage');
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+        
+        // 4. ボタンの見た目を一時的に変更（UX向上）
+        const originalText = btn.innerText;
+        const originalClass = btn.className;
+
+        btn.innerText = "コピー完了！";
+        // 一時的にボタンの色を緑(success)に変える
+        btn.classList.remove('btn-outline-secondary', 'btn-primary');
+        btn.classList.add('btn-success');
+        
+        // 2秒後に元の状態に戻す
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.className = originalClass;
+        }, 2000);
+    }).catch(err => {
+        console.error('コピーに失敗しました', err);
+        alert('コピーに失敗しました。ブラウザの設定を確認してください。');
+    });
+}
+</script>
+{% endblock %}

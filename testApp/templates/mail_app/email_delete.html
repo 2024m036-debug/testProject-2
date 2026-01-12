@@ -1,0 +1,21 @@
+{% extends 'mail_app/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-danger">
+        <h3>本当に削除しますか？</h3>
+        <p>この操作は取り消せません。</p>
+        
+        <div class="card p-3 mb-3 bg-white">
+            <strong>件名:</strong> {{ email.subject }}<br>
+            <strong>宛先:</strong> {{ email.recipient_name }}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">はい、削除します</button>
+            <a href="{% url 'email_detail' email.pk %}" class="btn btn-secondary">キャンセル</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

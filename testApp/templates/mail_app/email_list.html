@@ -1,0 +1,96 @@
+{% extends 'mail_app/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
+        <div>
+            <h1 class="display-6 fw-bold text-dark">メール作成履歴</h1>
+            <p class="text-secondary mb-0">これまでAIと作成したメールのアーカイブです</p>
+        </div>
+        <a href="{% url 'create_email' %}" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-bold">
+            <i class="bi bi-plus-lg me-2"></i>新規メールを作る
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white">
+                <span class="input-group-text bg-white border-0 ps-4">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" id="searchInput" class="form-control border-0 py-3" 
+                       placeholder="宛先や件名で検索..." value="{{ search_query|default:'' }}" autocomplete="off">
+                <div id="searchSpinner" class="d-none d-flex align-items-center pe-4 bg-white">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4" id="resultsArea">
+        {% include 'mail_app/email_list_partial.html' %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const resultsArea = document.getElementById('resultsArea');
+        const searchSpinner = document.getElementById('searchSpinner');
+        let timeout = null;
+
+        // 入力があるたびに実行されるイベント
+        searchInput.addEventListener('input', function() {
+            const query = this.value;
+
+            // サーバー負荷軽減のため、入力が止まってから300ms後に検索を実行（デバウンス処理）
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                // ローディング表示を開始
+                searchSpinner.classList.remove('d-none');
+
+                // サーバーへ非同期リクエストを送信
+                fetch(`?query=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    // partialテンプレートから生成されたHTMLでエリアを上書き
+                    resultsArea.innerHTML = data.html;
+                })
+                .catch(error => {
+                    console.error('検索エラー:', error);
+                })
+                .finally(() => {
+                    // ローディング表示を終了
+                    searchSpinner.classList.add('d-none');
+                });
+            }, 300);
+        });
+    });
+</script>
+
+<style>
+    /* 全体の背景色とカードの挙動を調整 */
+    body { background-color: #f8fafc; }
+    
+    .transition-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .transition-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+
+    /* 入力中のスピナー表示エリアの微調整 */
+    #searchSpinner {
+        z-index: 5;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'mail_app/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="{% url 'email_list' %}" class="btn btn-link text-decoration-none text-muted">
+                    <i class="bi bi-chevron-left me-1"></i> 一覧に戻る
+                </a>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'email_edit' email.pk %}" class="btn btn-outline-primary rounded-pill px-4">編集</a>
+                    <form method="POST" action="{% url 'email_delete' email.pk %}" onsubmit="return confirm('本当に削除しますか？');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger rounded-pill px-4">削除</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-0 p-4 p-md-5 pb-0">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-primary fw-bold text-uppercase small mb-2">Subject</h6>
+                            <h2 class="fw-bold text-dark">{{ email.subject }}</h2>
+                        </div>
+                    </div>
+                    <hr class="my-4 opacity-10">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <p class="small text-muted mb-1">宛先</p>
+                            <p class="fw-bold text-dark mb-0">{{ email.recipient_name }} 様</p>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <p class="small text-muted mb-1">作成日時</p>
+                            <p class="text-dark mb-0">{{ email.created_at|date:"Y年m月d日 H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <div class="p-4 rounded-4 bg-light border-0 position-relative">
+                        <h6 class="text-muted small fw-bold mb-3 text-uppercase">Email Body</h6>
+                        <div class="white-space-pre-wrap fs-6 leading-relaxed text-dark" id="emailBody">
+                            {{ email.body|linebreaksbr }}
+                        </div>
+                        
+                        <button class="btn btn-sm btn-dark rounded-pill position-absolute top-0 end-0 mt-3 me-3" onclick="copyToClipboard()">
+                            <i class="bi bi-clipboard me-1"></i> コピー
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard() {
+    const bodyText = document.getElementById('emailBody').innerText;
+    navigator.clipboard.writeText(bodyText).then(() => {
+        alert('クリップボードにコピーしました！');
+    });
+}
+</script>
+
+<style>
+    .white-space-pre-wrap { white-space: pre-wrap; }
+    .leading-relaxed { line-height: 1.8; }
+    .card-header { background-color: #ffffff; }
+</style>
+{% endblock %}

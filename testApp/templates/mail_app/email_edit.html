@@ -1,0 +1,23 @@
+{% extends 'mail_app/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>メール内容の編集</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">件名</label>
+            <input type="text" name="subject" value="{{ email.subject }}" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">本文</label>
+            <textarea name="body" class="form-control" rows="10">{{ email.body }}</textarea>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'email_detail' email.pk %}" class="btn btn-secondary">キャンセル</a>
+            <button type="submit" class="btn btn-success">変更を保存する</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

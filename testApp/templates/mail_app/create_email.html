@@ -1,0 +1,139 @@
+{% extends 'mail_app/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5 ml-1">
+        <div class="col-lg-8 mx-auto d-flex justify-content-between align-items-end">
+            <div>
+                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 mb-2">Gemini AI Engine</span>
+                <h1 class="display-6 fw-bold text-dark">AIメール作成</h1>
+                <p class="text-secondary mb-0">プロフェッショナルな文章を瞬時に構築します</p>
+            </div>
+            <a href="{% url 'email_list' %}" class="btn btn-link text-decoration-none text-muted mb-1">
+                <i class="bi bi-collection-play me-1"></i> 履歴を見る
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Recipient / 宛先名</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-person text-primary"></i></span>
+                                <input type="text" 
+                                       name="recipient_name" 
+                                       class="form-control form-control-lg bg-light border-0 fs-6" 
+                                       placeholder="例：株式会社〇〇 山田様" 
+                                       value="{{ form.recipient_name.value|default:'' }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Context / 伝えたいこと</label>
+                            <textarea name="context_notes" 
+                                      class="form-control bg-light border-0 px-4 py-3" 
+                                      rows="5" 
+                                      placeholder="例：新プロジェクトの打ち合わせ日程を調整したい。候補は来週火曜の14時以降です。" 
+                                      required>{{ form.context_notes.value|default:'' }}</textarea>
+                            <div class="form-text mt-2 px-1 text-end small italic">
+                                具体的に書くほど、精度の高いメールが生成されます。
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Category / 分類</label>
+                                <select name="category" class="form-select bg-light border-0">
+                                    <option value="business" selected>🏢 ビジネス全般</option>
+                                    <option value="inquiry">🔍 お問い合わせ</option>
+                                    <option value="apology">🙇 お詫び</option>
+                                    <option value="thanks">🤝 お礼・感謝</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Tone / 文章の雰囲気</label>
+                                <select name="tone_setting" class="form-select bg-light border-0">
+                                    <option value="standard" selected>標準（丁寧）</option>
+                                    <option value="polite">非常に丁寧（格式高く）</option>
+                                    <option value="casual">親しみやすい（距離感近く）</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-generate rounded-pill px-5 py-3 shadow-sm fw-bold">
+                                <i class="bi bi-stars me-2"></i>AIメールを生成する
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'email_list' %}" class="text-muted small text-decoration-none hover-link">
+                    作成を中止して戻る
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* モダンデザインのためのカスタムCSS */
+    :root {
+        --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+        --hover-gradient: linear-gradient(135deg, #4338ca 0%, #2563eb 100%);
+    }
+
+    body {
+        background-color: #f8fafc; /* 薄いグレーブルーで清潔感を */
+    }
+
+    .card {
+        transition: transform 0.3s ease;
+    }
+
+    .form-control, .form-select, .input-group-text {
+        border-radius: 12px !important;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+        transform: translateY(-1px);
+    }
+
+    .btn-generate {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-generate:hover {
+        background: var(--hover-gradient);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    }
+
+    .tracking-wider {
+        letter-spacing: 0.05em;
+    }
+
+    .hover-link:hover {
+        color: #3b82f6 !important;
+        text-decoration: underline !important;
+    }
+</style>
+{% endblock %}
