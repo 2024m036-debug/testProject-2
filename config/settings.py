@@ -138,7 +138,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # ログインが必要なページにアクセスした際、自動的に飛ばされるURL
 LOGIN_URL = 'login' 
