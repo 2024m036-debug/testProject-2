@@ -140,6 +140,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://bao-su-meru-sheng-cheng.onrender.com',
+]
+
 # ログインが必要なページにアクセスした際、自動的に飛ばされるURL
 LOGIN_URL = 'login' 
 
